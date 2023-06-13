@@ -190,6 +190,8 @@ function goNotice() {
         font-family: DINCondensed-Bold, DINCondensed;
         font-weight: bold;
         color: #084f3e;
+        position: relative;
+        top: 20px;
       }
       .day-tip {
         .flex-layout();

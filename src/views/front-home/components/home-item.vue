@@ -1,18 +1,20 @@
 <template>
   <div class="home-item-wrap">
     <!-- tip -->
-    <div class="tip">
-      <div class="item-tip"></div>
-    </div>
-    <div class="title-wrap">
-      <div class="left">租币当钱花</div>
-    </div>
-    <div class="scroll-wrap">
-      <template v-for="item of itemList" :key="item.id">
-        <div class="scroll-item" @click="goPage(item.url)">
-          <img :src="item.img" alt="" />
-        </div>
-      </template>
+    <div class="nav-wrap">
+      <div class="tip">
+        <div class="item-tip"></div>
+      </div>
+      <div class="title-wrap">
+        <div class="left">租币当钱花</div>
+      </div>
+      <div class="scroll-wrap">
+        <template v-for="item of itemList" :key="item.id">
+          <div class="scroll-item" @click="goPage(item.url)">
+            <img :src="item.img" alt="" />
+          </div>
+        </template>
+      </div>
     </div>
     <div class="title-wrap">
       <div class="left">租物推荐</div>
@@ -62,25 +64,43 @@ function goPage(url: string) {
 <style scoped lang="less">
 @import '@/assets/css/mixins.less';
 .home-item-wrap {
-  width: 100%;
-  // padding: 0 15px;
-  box-sizing: border-box;
-  background: #f7f8f9;
-  border-radius: 24px 24px 0px 0px;
-  position: relative;
-  top: -34px;
-  .tip {
-    .flex-layout();
+  .nav-wrap {
     width: 100%;
-    padding: 10px 0;
+    // padding: 0 15px;
     box-sizing: border-box;
-    .item-tip {
-      width: 30px;
-      height: 5px;
-      border-radius: 3px;
-      background: #e2e2e2;
+    background: #fff;
+    border-radius: 24px 24px 0px 0px;
+    position: relative;
+    top: -34px;
+    .tip {
+      .flex-layout();
+      width: 100%;
+      padding: 10px 0;
+      box-sizing: border-box;
+      .item-tip {
+        width: 30px;
+        height: 5px;
+        border-radius: 3px;
+        background: #e2e2e2;
+      }
+    }
+    .scroll-wrap {
+      box-sizing: border-box;
+      white-space: nowrap;
+      overflow: hidden;
+      overflow-x: auto;
+      margin-left: 15px;
+      .scroll-item {
+        width: 100px;
+        height: 120px;
+        margin-right: 5px;
+        display: inline-block;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
     }
   }
+
   .title-wrap {
     height: 36px;
     .flex-layout(space-between);
@@ -99,49 +119,33 @@ function goPage(url: string) {
       color: #999999;
     }
   }
-  .scroll-wrap {
-    box-sizing: border-box;
-    white-space: nowrap;
-    overflow: hidden;
-    overflow-x: auto;
-    margin-bottom: 40px;
-    margin-left: 15px;
-    .scroll-item {
-      width: 100px;
-      height: 120px;
-      margin-right: 5px;
-      background: #008c8c;
-      display: inline-block;
-      border-radius: 10px;
-    }
-  }
-
   .goods-item-wrap {
     flex-wrap: wrap;
     background-color: #f7f8f9;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    padding-left: 15px;
+    padding: 0 12px;
     .item {
       display: flex;
       flex-direction: column;
       position: relative;
-      width: 168px;
+      width: 170px;
       background: #ffffff;
       border-radius: 5px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
+      margin-bottom: 6px;
       box-sizing: border-box;
-      margin-bottom: 5px;
+
       .img {
-        width: 168px;
+        width: 100%;
         // border: 1px solid;
         height: 136px;
         margin-bottom: 5px;
       }
       .info {
-        margin-left: 6px;
+        padding: 0 6px;
         .title {
           font-size: 14px;
           line-height: 14px;
@@ -163,12 +167,12 @@ function goPage(url: string) {
         }
         .item-count {
           display: flex;
+          justify-content: space-between;
           font-size: 12px;
           color: #999999;
           margin-bottom: 8px;
           .original-price {
             color: #f04f4f;
-            margin-right: 43px;
           }
         }
       }

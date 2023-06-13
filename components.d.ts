@@ -9,11 +9,11 @@ declare module 'vue' {
   export interface GlobalComponents {
     BetterScroll: typeof import('./src/components/better-scroll/index.vue')['default']
     LoadMoreBtn: typeof import('./src/components/load-more-btn/index.vue')['default']
+    NothingPage: typeof import('./src/components/nothing-page/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VanDivider: typeof import('vant/es')['Divider']
     VanIcon: typeof import('vant/es')['Icon']
-    VanSwipe: typeof import('vant/es')['Swipe']
-    VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']
   }

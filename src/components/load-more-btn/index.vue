@@ -35,6 +35,7 @@ function handleGoPage() {
   align-items: center;
   width: 100%;
   padding: 25px 0;
+  background: #f7f8f9;
   .load-more-btn {
     display: flex;
     justify-content: center;

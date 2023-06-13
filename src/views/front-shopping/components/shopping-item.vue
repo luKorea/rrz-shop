@@ -126,7 +126,7 @@ function searchItem(index: number) {
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       box-sizing: border-box;
-
+      margin-bottom: 6px;
       .is-free {
         position: absolute;
         right: 8px;
@@ -139,7 +139,7 @@ function searchItem(index: number) {
         margin-bottom: 5px;
       }
       .info {
-        margin-left: 6px;
+        padding: 0 10px;
         .title {
           font-size: 14px;
           line-height: 14px;
