@@ -1,24 +1,12 @@
-# mini-app
+# 目录划分
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+1. assets
+   1.1 image
+   1.1.1 home
+   1.1.2 notice
+   1.1.3 shopping
+2. views
+   1.1 front-home
+   1.1.1 index.vue
+   1.1.2 components
+   1.1.2.1 home-banner

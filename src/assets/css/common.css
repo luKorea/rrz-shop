@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'DINCondensed-Bold';
+  src: url('../font/DIN-Condensed/DIN-Condensed-Bold-2.ttf');
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100vh;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+img {
+  width: 100%;
+  height: 100%;
+}
+.f-14 {
+  font-size: 14px !important;
+  margin: 0 4px;
+}
+.orange-tip {
+  background: linear-gradient(138deg, #ff9a3c 0%, #ff611c 100%);
+  border-radius: 2px;
+  padding: 3px 6px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #ffffff;
+  width: 34px;
+  font-size: 11px;
+  text-align: center;
+}
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
