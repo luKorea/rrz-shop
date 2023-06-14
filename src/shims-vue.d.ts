@@ -5,4 +5,8 @@ declare module '*.vue' {
   export default component
 }
 
+declare interface Window {
+  clientHeight: any
+}
+
 declare module 'mockjs'

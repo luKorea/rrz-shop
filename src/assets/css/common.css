@@ -1,6 +1,10 @@
 @font-face {
   font-family: 'DINCondensed-Bold';
-  src: url('../font/DIN-Condensed/DIN-Condensed-Bold-2.ttf');
+  src: url('../font/DIN-Condensed-Bold-2.ttf');
+}
+@font-face {
+  font-family: 'PingFangSC-Medium';
+  src: url('../font/pingfang-sc-medium.otf');
 }
 html,
 body,
@@ -37,4 +41,16 @@ img {
   white-space: nowrap;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
+}
+.nothing-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 12px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
+  line-height: 12px;
+  padding: 15px 0;
 }

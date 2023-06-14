@@ -1,118 +1,132 @@
 <template>
-  <div class="active-wrap">
-    <template v-if="list.length">
-      <template v-for="item of list" :key="item.id">
-        <div class="active-item" @click="showDetails(item)">
-          <div class="left">
-            <img src="@/assets/image/notice/notice.png" alt="" />
-            <div v-if="!item.isWatch" class="item-point">
-              <img src="@/assets/image/notice/point.png" alt="" />
-            </div>
-          </div>
-          <div class="right">
-            <div class="top">
-              <div class="title">{{ item.title }}</div>
-              <div class="time">{{ item.time }}</div>
-            </div>
-            <div class="bottom text-ellipsis">{{ item.desc }}</div>
-          </div>
-        </div>
-        <div class="line"></div>
-      </template>
-      <div class="nothing-more">没有更多了</div>
+  <template v-if="list.length">
+    <template v-for="item of list" :key="item.id">
+      <notice-item
+        :item-info="item"
+        @show-details="showDetails"
+        type="notice"
+      ></notice-item>
     </template>
-    <nothing-page v-else></nothing-page>
-  </div>
+    <div class="nothing-more">没有更多了</div>
+  </template>
+  <nothing-page v-else></nothing-page>
+
+  <!-- 这里展示详情内容 -->
+  <van-action-sheet v-model:show="showDetail">
+    <div class="action-content">
+      <div class="title">{{ showDetailInfo?.title }}</div>
+      <div class="desc">{{ showDetailInfo?.desc }}</div>
+      <div class="img">
+        <img :src="showDetailInfo?.img" alt="" />
+      </div>
+      <div class="sub-title">{{ showDetailInfo?.subTitle }}</div>
+      <div class="sub-desc">{{ showDetailInfo?.subDesc }}</div>
+      <div class="btn-wrap">
+        <div class="delete" @click="deleteItem">删除</div>
+        <div class="confirm" @click="confirmItem">确定</div>
+      </div>
+    </div>
+  </van-action-sheet>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, ref, defineEmits, defineExpose } from 'vue'
 import nothingPage from '@/components/nothing-page/index.vue'
-import type { IDataListProps } from '../types'
+import noticeItem from '@/components/notice-item/index.vue'
+import type { IDataListProps } from '../resource/types'
 
 interface IProps {
   list: IDataListProps[]
 }
 
 defineProps<IProps>()
+const emits = defineEmits(['delete', 'confirm'])
+
+const showDetail = ref(false)
+const showDetailInfo = ref<IDataListProps>()
 
 function showDetails(item: IDataListProps) {
-  console.log(item)
+  showDetail.value = true
+  showDetailInfo.value = item
 }
+
+function deleteItem() {
+  emits('delete', showDetailInfo.value?.id)
+}
+
+function confirmItem() {
+  emits('confirm', showDetailInfo.value?.id, showDetailInfo.value?.isWatch)
+}
+
+defineExpose({
+  showDetail
+})
 </script>
 
 <style scoped lang="less">
-@import url('@/assets/css/mixins.less');
-.active-wrap {
-  width: 100%;
-  .active-item {
-    display: flex;
-    padding: 15px;
-    width: 100%;
-    box-sizing: border-box;
-    .left {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
-      position: relative;
-      .item-point {
-        position: absolute;
-        right: -6px;
-        top: -8px;
-        width: 8px;
-        height: 8px;
-      }
-    }
-    .right {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      .top {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        .title {
-          height: 16px;
-          font-size: 16px;
-          font-family: PingFangSC-Regular, PingFang SC;
-          font-weight: 400;
-          color: #333333;
-          line-height: 16px;
-        }
-        .time {
-          height: 12px;
-          font-size: 12px;
-          font-family: PingFangSC-Regular, PingFang SC;
-          font-weight: 400;
-          color: #999999;
-          line-height: 12px;
-        }
-      }
-      .bottom {
-        width: 311px;
-        height: 12px;
-        font-size: 12px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #999999;
-        line-height: 12px;
-      }
-    }
+.action-content {
+  padding: 35px 16px 0 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+
+  .title {
+    height: 18px;
+    font-size: 18px;
+    font-weight: 400;
+    color: #333333;
+    line-height: 18px;
+    margin-bottom: 10px;
   }
-  .line {
-    margin-left: 15px;
-    height: 1px;
-    background-color: #f2f2f2;
+  .desc {
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 19px;
   }
-  .nothing-more {
-    .flex-layout();
-    height: 12px;
-    font-size: 12px;
+  .img {
+    width: 345px;
+    height: 160px;
+    margin: 10px 0;
+  }
+  .sub-title {
+    height: 23px;
+    font-size: 16px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #222222;
+    line-height: 23px;
+  }
+  .sub-desc {
+    height: 19px;
+    font-size: 14px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #999999;
-    line-height: 12px;
-    margin-top: 15px;
+    line-height: 19px;
+    margin: 5px 0 22px 0;
+  }
+  .btn-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0 -15px;
+    .delete {
+      width: 115px;
+      background: #f2f2f2;
+      height: 50px;
+      color: #bfbfbf;
+    }
+    .confirm {
+      flex: 1;
+      background: #00c8be;
+      height: 50px;
+      text-align: center;
+      color: #ffffff;
+    }
   }
 }
 </style>

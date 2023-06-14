@@ -1,8 +1,10 @@
 @font-face {
   font-family: 'DINCondensed-Bold';
   src: url('../font/DIN-Condensed-Bold-2.ttf');
+  font-display: swap;
 }
 @font-face {
   font-family: 'PingFangSC-Medium';
   src: url('../font/pingfang-sc-medium.otf');
+  font-display: swap;
 }

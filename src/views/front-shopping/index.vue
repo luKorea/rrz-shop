@@ -15,22 +15,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import shoppingBanner from './components/shopping-banner.vue'
 import shoppingItem from './components/shopping-item.vue'
 import loadMoreBtn from '@/components/load-more-btn/index.vue'
 
+import { showLoading, closeLoading } from '@/hooks/use-vant'
 import useTitle from '@/hooks/use-title'
-import uuid from '@/utils/uuid'
-import type { IGoodsListProps } from './types'
 import useScroll from '@/hooks/use-scroll'
+import { getGoodsData } from './resource/data'
+import { IGoodsListProps } from './resource/types'
 
 const shoppingRef = ref<InstanceType<typeof shoppingItem> | null>(null)
-const { isReachBottom } = useScroll(shoppingRef.value)
-
-// TODO 缺少上滑加载更多，触底加载更多
-watchEffect(() => {
-  console.log(isReachBottom.value, 'isReachBottom.value')
+// 上拉加载数据
+const { isReachBottom } = useScroll()
+watch(isReachBottom, (newValue: boolean) => {
+  if (newValue) {
+    if (goodsList.value.length <= 50) {
+      showLoading()
+      goodsList.value = [...goodsList.value, ...getGoodsData()]
+    }
+    isReachBottom.value = false
+    nextTick(() => {
+      closeLoading()
+    })
+  }
 })
 
 const priceList = ref<string[]>([
@@ -41,48 +50,7 @@ const priceList = ref<string[]>([
   '5000以上'
 ])
 
-const goodsList = ref<IGoodsListProps[]>([
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: true,
-    img: require('@/assets/image/shopping/goods-item1.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: false,
-    img: require('@/assets/image/shopping/goods-item2.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: true,
-    img: require('@/assets/image/shopping/goods-item3.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: false,
-    img: require('@/assets/image/shopping/goods-item4.png')
-  }
-])
+const goodsList = ref<IGoodsListProps[]>(getGoodsData())
 
 function goPage() {
   console.log('去页面')

@@ -8,10 +8,14 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BetterScroll: typeof import('./src/components/better-scroll/index.vue')['default']
+    GetPurse: typeof import('./src/components/get-purse/index.vue')['default']
     LoadMoreBtn: typeof import('./src/components/load-more-btn/index.vue')['default']
     NothingPage: typeof import('./src/components/nothing-page/index.vue')['default']
+    NoticeItem: typeof import('./src/components/notice-item/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SheetPage: typeof import('./src/components/sheet-page/index.vue')['default']
+    VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanDivider: typeof import('vant/es')['Divider']
     VanIcon: typeof import('vant/es')['Icon']
     VanTab: typeof import('vant/es')['Tab']

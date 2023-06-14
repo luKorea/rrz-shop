@@ -28,6 +28,19 @@
       </div>
     </div>
 
+    <!-- 加租币区域 -->
+    <template v-if="iconList.length">
+      <div class="icon-wrap">
+        <template v-for="(item, index) of iconList" :key="item.id">
+          <div class="icon-item" :id="`icon-${index}`">
+            <div class="title">{{ item.title }}</div>
+            <div class="img">
+              <img :src="item.icon" alt="" />
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
     <!-- 今日步数 -->
     <div class="day-wrap">
       <div class="day-info">
@@ -49,10 +62,19 @@
 </template>
 
 <script setup lang="ts">
+import { defineProps, onMounted } from 'vue'
 import userStore from '@/store/module/user'
 import { storeToRefs } from 'pinia'
-import { showDialog } from '@/hooks/use-vant'
+import { showSuccessToast } from '@/hooks/use-vant'
 import { useRouter } from 'vue-router'
+import type { IIconProps } from '../resource/types'
+import { iconProps } from 'vant'
+
+interface IProps {
+  iconList: IIconProps[]
+}
+
+const props = defineProps<IProps>()
 
 const router = useRouter()
 const user = userStore()
@@ -62,14 +84,31 @@ function handleSign() {
   let { isSign } = initState.value.userInfo
   if (!isSign) {
     initState.value.userInfo.isSign = !isSign
-    showDialog({
-      message: '签到成功'
-    })
+    showSuccessToast('签到成功')
   }
 }
 
 function goNotice() {
   router.push('/notice')
+}
+
+function renderIcon() {
+  if (props.iconList.length) {
+    props.iconList.forEach((_, index) => {
+      getTopPosition(index)
+    })
+  }
+}
+
+onMounted(() => renderIcon())
+function getTopPosition(index: number) {
+  const antForestBallItem: any = document.getElementById(`icon-${index}`)
+  console.log(antForestBallItem.style.width)
+  // if (antForestBallItem) {
+  //   antForestBallItem.style.position = 'absolute'
+  //   antForestBallItem.style.left = `${((60 - 42.5 + index * 10) / 100) * 100}%`
+  //   antForestBallItem.style.top = `${((60 - 42.5 + index * 200) / 100) * 100}%` // 使用%定位
+  // }
 }
 </script>
 
@@ -81,7 +120,7 @@ function goNotice() {
   flex-direction: column;
   width: 100%;
   height: 396px;
-  background-image: url(../../../assets/image/home/home-bg.png);
+  background: url(../../../assets/image/home/home-bg.png) no-repeat center;
   background-size: contain;
   .icon-item {
     width: 28px;
@@ -161,11 +200,56 @@ function goNotice() {
       color: #105b50;
     }
   }
+
+  .icon-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    top: 70px;
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 48px;
+      margin-right: 10px;
+      // &:nth-child(1) {
+      //   top: 30px;
+      // }
+      // &:nth-child(2) {
+      //   top: 10px;
+      // }
+      // &:nth-child(3) {
+      //   top: 14px;
+      // }
+      // &:nth-child(4) {
+      //   top: 10px;
+      // }
+      &:last-child {
+        // top: 30px;
+        margin-right: 0;
+      }
+      .title {
+        height: 11px;
+        font-size: 11px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #105b50;
+        line-height: 11px;
+      }
+      .img {
+        width: 48px;
+        height: 48px;
+        // animation: iconSport 1s linear infinite;
+      }
+    }
+  }
   .day-wrap {
     .flex-layout();
     flex-direction: column;
     position: absolute;
-    bottom: 60px;
+    bottom: 50px;
     width: 100%;
     .day-info {
       .flex-layout();
@@ -229,6 +313,24 @@ function goNotice() {
       font-weight: 500;
       color: #ffffff;
     }
+  }
+}
+
+@keyframes iconSport {
+  0% {
+    transform: translateY(10px);
+  }
+  25% {
+    transform: translateY(8px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  75% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 </style>

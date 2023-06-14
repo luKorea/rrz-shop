@@ -1,6 +1,6 @@
 <template>
   <div class="home-wrapper">
-    <home-banner></home-banner>
+    <home-banner :icon-list="iconList"></home-banner>
     <home-item
       :goods-list="goodsList"
       :item-list="itemList"
@@ -15,86 +15,84 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import homeBanner from './components/home-banner.vue'
 import homeItem from './components/home-item.vue'
 import loadMoreBtn from '@/components/load-more-btn/index.vue'
 
 import useTitle from '@/hooks/use-title'
+import type { IItemProps, IIconProps } from './resource/types'
+import { getGoodsData } from './resource/data'
 import uuid from '@/utils/uuid'
-import type { IGoodsListProps, IItemProps } from './types'
+
+// 图标
+const iconList = ref<IIconProps[]>([
+  {
+    id: uuid(),
+    title: '支付成功',
+    type: 'pay',
+    icon: require('@/assets/image/home/pay-two.png')
+  },
+  {
+    id: uuid(),
+    title: '支付成功',
+    type: 'pay',
+    icon: require('@/assets/image/home/pay-two.png')
+  },
+  {
+    id: uuid(),
+    title: '运动步数',
+    type: 'sport',
+    icon: require('@/assets/image/home/pay-two.png')
+  },
+  {
+    id: uuid(),
+    title: '运动步数',
+    type: 'sport',
+    icon: require('@/assets/image/home/pay-two.png')
+  },
+  {
+    id: uuid(),
+    title: '新人专享',
+    type: 'new',
+    icon: require('@/assets/image/home/new-two.png')
+  }
+])
 
 const itemList = ref<IItemProps[]>([
   {
     img: require('@/assets/image/home/pic1.png'),
     url: '/details',
+    type: 'url',
     id: 1
   },
   {
     img: require('@/assets/image/home/pic2.png'),
     url: '/details',
+    type: 'modal',
     id: 2
   },
   {
     img: require('@/assets/image/home/pic3.png'),
     url: '/shopping',
+    type: 'url',
     id: 3
   },
   {
     img: require('@/assets/image/home/pic1.png'),
     url: '/details',
+    type: 'url',
     id: 4
   },
   {
     img: require('@/assets/image/home/pic2.png'),
     url: '/details',
+    type: 'url',
     id: 5
   }
 ])
 
-const goodsList = ref<IGoodsListProps[]>([
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: true,
-    img: require('@/assets/image/shopping/goods-item1.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: false,
-    img: require('@/assets/image/shopping/goods-item2.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: true,
-    img: require('@/assets/image/shopping/goods-item3.png')
-  },
-  {
-    id: uuid(),
-    title: '顶配 iPhone Xs 256 Pro Max',
-    purse: 2048,
-    currentPrice: 9.9,
-    originalPrice: 12.8,
-    count: 2434,
-    isFree: false,
-    img: require('@/assets/image/shopping/goods-item4.png')
-  }
-])
-
+const goodsList = computed(() => getGoodsData())
 function goPage() {
   console.log('去页面')
 }

@@ -10,7 +10,7 @@
       </div>
       <div class="scroll-wrap">
         <template v-for="item of itemList" :key="item.id">
-          <div class="scroll-item" @click="goPage(item.url)">
+          <div class="scroll-item" @click="goPage(item)">
             <img :src="item.img" alt="" />
           </div>
         </template>
@@ -32,20 +32,25 @@
               <div class="current-type">免押金</div>
               <div class="item-count">
                 <div class="original-price">¥{{ item.originalPrice }}/天</div>
-                <div class="count">30天起租</div>
+                <div class="count">{{ item.day }}天起租</div>
               </div>
             </div>
           </div>
         </template>
       </div>
     </template>
+
+    <!-- 任务区域 -->
+    <home-task ref="homeTaskRef"></home-task>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { IGoodsListProps, IItemProps } from '../types'
+import type { IGoodsListProps, IItemProps } from '../resource/types'
+
+import homeTask from './home-task.vue'
 
 interface IProps {
   itemList: IItemProps[]
@@ -55,9 +60,14 @@ interface IProps {
 defineProps<IProps>()
 
 const router = useRouter()
+const homeTaskRef = ref<InstanceType<typeof homeTask> | null>(null)
 
-function goPage(url: string) {
-  router.push(url)
+function goPage(item: IItemProps) {
+  if (item.type === 'url') {
+    router.push(item.url)
+  } else {
+    homeTaskRef.value && homeTaskRef.value.changeModal()
+  }
 }
 </script>
 

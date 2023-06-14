@@ -12,4 +12,6 @@ export interface IDataListProps {
   isWatch: boolean
   subTitle?: string
   subDesc?: string
+  img?: string
+  purse: number
 }

@@ -1,10 +1,13 @@
 <template>
-  <div class="notice-wrapper">
+  <div class="notice-wrapper" ref="noticeRef">
     <van-tabs
       v-model:active="selectItem"
-      color="#00c8be"
-      line-width="21px"
+      color="#00C8BE"
+      line-width="20px"
       @click-tab="changeItem"
+      title-active-color="#333"
+      title-inactive-color="#666"
+      sticky
     >
       <template v-for="(item, index) of tabList" :key="index">
         <van-tab
@@ -16,14 +19,14 @@
       </template>
     </van-tabs>
     <div class="remove-wrap">
-      <div class="item">
+      <div class="item" @click="deleteIsWatchItem">
         <div class="icon">
           <img src="@/assets/image/notice/delete.png" alt="" />
         </div>
         <div class="title">删除已读</div>
       </div>
       <van-divider vertical />
-      <div class="item">
+      <div class="item" @click="oneClickRead">
         <div class="icon">
           <img src="@/assets/image/notice/remove.png" alt="" />
         </div>
@@ -34,81 +37,179 @@
     <notice-active
       v-if="selectItem === 'notice'"
       :list="activeList"
+      @delete="deleteItem"
+      @confirm="confirmItem"
+      ref="itemRef"
     ></notice-active>
     <notice-order
       v-if="selectItem === 'order'"
       :list="orderList"
     ></notice-order>
   </div>
+
+  <!-- 这里处理通知获取金币 -->
+  <get-purse
+    :show-get-purse="showGetPurse"
+    type="notice"
+    :total-purse="!isOneClick ? saveClickItemInfo?.purse : totalPurse"
+  ></get-purse>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { IDataListProps, ITabProps } from './types'
+import { ref, computed, watch } from 'vue'
+import type { IDataListProps, ITabProps } from './resource/types'
 
 import noticeActive from './components/notice-active.vue'
 import noticeOrder from './components/notice-order.vue'
-import uuid from '@/utils/uuid'
+import getPurse from '@/components/get-purse/index.vue'
 
-const activeList = ref<IDataListProps[]>([
-  {
-    title: '活动通知',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '人人租机祝你节日快乐',
-    isWatch: false
-  },
-  {
-    title: '免费得iPhone11',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '人人租机祝你节日快乐',
-    isWatch: false
-  },
-  {
-    title: '这里的字符限制是十二个字',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '恭喜获得20个租币，请查收。为了感谢其长久以来的陪伴，这里的文字请忽略。活动期间每天 11 点还会上线限量礼包，数量有限先到先得，用户们千万不要错过！ ',
-    isWatch: true
-  },
-  {
-    title: '节日赠租币',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '恭喜获得20个租币，请查收。为了感谢其长久以来的陪伴，这里的文字请忽略。活动期间每天 11 点还会上线限量礼包，数量有限先到先得，用户们千万不要错过！ ',
-    isWatch: true
-  }
-])
-const orderList = ref<IDataListProps[]>([
-  {
-    title: '订单已取消',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '订单已成功取消，感谢您的关注',
-    isWatch: false
-  },
-  {
-    title: '节日赠租币',
-    id: uuid(),
-    time: '2020-03-23 14:30',
-    desc: '订单已成功取消，感谢您的关注',
-    isWatch: true
-  }
-])
+import {
+  showFrontDialog,
+  showSuccessToast,
+  closeLoading,
+  showLoading
+} from '@/hooks/use-vant'
+import { nextTick } from 'vue'
+import { getOrderData, getActiveData } from './resource/data'
+import useScroll from '@/hooks/use-scroll'
 
+// 活动通知
+const activeList = ref<IDataListProps[]>(getActiveData())
+// 订单消息
+const orderList = ref<IDataListProps[]>(getOrderData())
 const selectItem = ref('notice')
-const tabList = ref<ITabProps[]>([
-  {
-    title: '活动公告',
-    name: 'notice'
-  },
-  {
-    title: '订单消息',
-    name: 'order',
-    showDot: true
+const tabList = computed<ITabProps[]>(() => {
+  return [
+    {
+      title: '活动公告',
+      name: 'notice'
+    },
+    {
+      title: '订单消息',
+      name: 'order',
+      showDot: isShowDot.value
+    }
+  ]
+})
+
+const itemRef = ref<InstanceType<typeof noticeActive> | null>(null)
+const showGetPurse = ref(false)
+const saveClickItemInfo = ref<IDataListProps>()
+
+const isNotice = computed(() => selectItem.value === 'notice')
+const isShowDot = computed(() => !!orderList.value.find((i) => !i.isWatch))
+const isOneClick = ref(false)
+const totalPurse = ref(0)
+
+// 上拉加载数据
+const { isReachBottom } = useScroll()
+watch(isReachBottom, (newValue) => {
+  if (newValue) {
+    if (isNotice.value && activeList.value.length <= 50) {
+      showLoading()
+      activeList.value = [...activeList.value, ...getActiveData()]
+    } else if (!isNotice.value && orderList.value.length <= 50) {
+      showLoading()
+      orderList.value = [...orderList.value, ...getOrderData()]
+    }
+    isReachBottom.value = false
+    nextTick(() => {
+      closeLoading()
+    })
   }
-])
+})
+
+function confirmItem(id: string, isWatch: boolean) {
+  let item = null
+  if (isNotice.value) {
+    item = activeList.value.find((i) => i.id === id)
+    item && (item.isWatch = true)
+  } else {
+    item = orderList.value.find((i) => i.id === id)
+    item && (item.isWatch = true)
+  }
+  saveClickItemInfo.value = item
+  itemRef.value && (itemRef.value.showDetail = false)
+  // 这里展示中奖信息
+  !isWatch && changGetPurseState()
+}
+function deleteItem(id: string) {
+  showFrontDialog({
+    message: `是否确认要删除${isNotice.value ? '该通知' : '该订单'}`
+  })
+    .then(() => {
+      console.log('这里不做操作')
+    })
+    .catch(() => {
+      let index = null
+      if (isNotice.value) {
+        index = activeList.value.findIndex((i) => i.id === id)
+        activeList.value.splice(index, 1)
+      } else {
+        index = orderList.value.findIndex((i) => i.id === id)
+        orderList.value.splice(index, 1)
+      }
+      showSuccessToast(`删除${isNotice.value ? '通知' : '订单'}成功`)
+      itemRef.value && (itemRef.value.showDetail = false)
+    })
+}
+
+// 删除已读
+function deleteIsWatchItem() {
+  showFrontDialog({
+    message: `是否确认要删除${isNotice.value ? '已读通知' : '已读订单'}`
+  })
+    .then(() => {
+      console.log('这里不做操作')
+    })
+    .catch(() => {
+      if (isNotice.value) {
+        activeList.value = activeList.value.filter((i) => !i.isWatch)
+      } else {
+        orderList.value = orderList.value.filter((i) => !i.isWatch)
+      }
+    })
+}
+// 一键已读
+function oneClickRead() {
+  if (isNotice.value) {
+    const item = activeList.value.filter((i) => !i.isWatch)
+    // 已经点击过就不再处理
+    if (!item.length) return
+    // 拿到未读信息的金币, 累加
+    const purseTotal = item.reduce((pre, next) => pre + next.purse, 0)
+    isOneClick.value = true
+    totalPurse.value = purseTotal
+    activeList.value = activeList.value.map((i) => {
+      if (!i.isWatch) {
+        i.isWatch = true
+      }
+      return {
+        ...i
+      }
+    })
+    changGetPurseState()
+  } else {
+    orderList.value = orderList.value.map((i) => {
+      if (!i.isWatch) {
+        i.isWatch = true
+      }
+      return {
+        ...i
+      }
+    })
+  }
+}
+
+async function changGetPurseState() {
+  showGetPurse.value = true
+  await nextTick()
+  setTimeout(() => {
+    showGetPurse.value = false
+  }, 2000)
+}
+
+// tab
 
 function changeItem(item: ITabProps) {
   const checked = tabList.value.find((i) => i.title === item.title)
@@ -120,10 +221,22 @@ function changeItem(item: ITabProps) {
 @import url('@/assets/css/mixins.less');
 .notice-wrapper {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: #fff;
   // padding: 0 15px;
   // box-sizing: border-box;
+  :deep(.van-tab) {
+    flex: none;
+    padding: 0 15px;
+    font-size: 16px;
+  }
+  :deep(.van-tabs__line) {
+    bottom: 20px;
+  }
+  :deep(.van-tab--active) {
+    font-size: 20px;
+  }
+
   .remove-wrap {
     display: flex;
     align-items: center;

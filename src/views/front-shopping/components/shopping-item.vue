@@ -30,7 +30,7 @@
       <div class="goods-item-wrap">
         <template v-for="item of goodsList" :key="item.id">
           <div class="item">
-            <div class="img"><img :src="item.img" alt="" /></div>
+            <div class="img"><img lazy :src="item.img" alt="" /></div>
             <div class="is-free orange-tip" v-if="item.isFree">包邮</div>
             <div class="info">
               <div class="title text-ellipsis">
@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
-import type { IGoodsListProps } from '../types'
+import type { IGoodsListProps } from '../resource/types'
 
 interface IProps {
   priceList: string[]
