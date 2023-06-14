@@ -1,19 +1,21 @@
 <template>
-  <div class="purse-info-wrap" v-show="showGetPurse">
-    <div class="get-info">
-      <div class="left">
-        <img src="@/assets/image/notice/get-price.png" alt="" />
-      </div>
-      <div class="center">
-        <div class="title">
-          恭喜获得
-          {{ totalPurse }} 个租币！
+  <transition name="purse">
+    <div class="purse-info-wrap" v-show="showGetPurse">
+      <div class="get-info">
+        <div class="left">
+          <img src="@/assets/image/notice/get-price.png" alt="" />
         </div>
-        <div class="source">{{ getType }}</div>
+        <div class="center">
+          <div class="title">
+            恭喜获得
+            {{ totalPurse }} 个租币！
+          </div>
+          <div class="source">{{ getType }}</div>
+        </div>
+        <div class="right">+{{ totalPurse }}</div>
       </div>
-      <div class="right">+{{ totalPurse }}</div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
@@ -86,5 +88,19 @@ const getType = computed(() => IType[props.type])
       color: #ffffff;
     }
   }
+}
+
+.purse-enter,
+.purse-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.purse-enter-to,
+.purse-leave {
+  opacity: 1;
+}
+.purse-enter-active,
+.purse-leave-active {
+  transition: all 0.5s;
 }
 </style>
