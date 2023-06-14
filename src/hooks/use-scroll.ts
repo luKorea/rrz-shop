@@ -1,7 +1,24 @@
 import { onMounted, onUnmounted, ref, onDeactivated } from 'vue'
 import { throttle } from 'underscore'
 
-export default function useScroll(elRef?: any) {
+declare const RefSymbol: unique symbol
+export interface Ref<T = any> {
+  value: T
+  /**
+   * Type differentiator only.
+   * We need this to be in public d.ts but don't want it to show up in IDE
+   * autocomplete, so we use a private Symbol instead.
+   */
+  [RefSymbol]: true
+}
+
+type MaybeRef<T> = T | Ref<T>
+type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
+export default function useScroll(
+  elRef?: MaybeRefOrGetter<
+    HTMLElement | SVGElement | Window | Document | null | undefined
+  >
+) {
   let el = window as any
 
   const isReachBottom = ref(false)
@@ -28,8 +45,9 @@ export default function useScroll(elRef?: any) {
 
   onMounted(() => {
     if (elRef) {
-      el = elRef.value
+      el = elRef
     }
+    console.log(el, 'el')
     el.addEventListener('scroll', scrollListenerHandler)
   })
 

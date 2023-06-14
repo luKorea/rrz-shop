@@ -71,7 +71,7 @@ import {
 } from '@/hooks/use-vant'
 import { nextTick } from 'vue'
 import { getOrderData, getActiveData } from './resource/data'
-import useScroll from '@/hooks/use-scroll'
+import { useScroll } from '@vueuse/core'
 
 // 活动通知
 const activeList = ref<IDataListProps[]>(getActiveData())
@@ -102,22 +102,25 @@ const isOneClick = ref(false)
 const totalPurse = ref(0)
 
 // 上拉加载数据
-const { isReachBottom } = useScroll()
-watch(isReachBottom, (newValue) => {
-  if (newValue) {
-    if (isNotice.value && activeList.value.length <= 50) {
-      showLoading()
-      activeList.value = [...activeList.value, ...getActiveData()]
-    } else if (!isNotice.value && orderList.value.length <= 50) {
-      showLoading()
-      orderList.value = [...orderList.value, ...getOrderData()]
+const noticeRef = ref<HTMLElement | null>(null)
+const { arrivedState } = useScroll(noticeRef)
+watch(
+  () => arrivedState.bottom,
+  (newValue) => {
+    if (newValue) {
+      if (isNotice.value && activeList.value.length <= 50) {
+        showLoading()
+        activeList.value = [...activeList.value, ...getActiveData()]
+      } else if (!isNotice.value && orderList.value.length <= 50) {
+        showLoading()
+        orderList.value = [...orderList.value, ...getOrderData()]
+      }
+      nextTick(() => {
+        closeLoading()
+      })
     }
-    isReachBottom.value = false
-    nextTick(() => {
-      closeLoading()
-    })
   }
-})
+)
 
 function confirmItem(id: string, isWatch: boolean) {
   let item = null
@@ -222,6 +225,7 @@ function changeItem(item: ITabProps) {
 .notice-wrapper {
   width: 100%;
   height: 100vh;
+  overflow: auto;
   background-color: #fff;
   // padding: 0 15px;
   // box-sizing: border-box;

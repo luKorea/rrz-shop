@@ -1,5 +1,5 @@
 <template>
-  <div class="shopping-wrapper">
+  <div class="shopping-wrapper" ref="shoppingWrapRef">
     <shopping-banner></shopping-banner>
     <shopping-item
       :price-list="priceList"
@@ -22,25 +22,28 @@ import loadMoreBtn from '@/components/load-more-btn/index.vue'
 
 import { showLoading, closeLoading } from '@/hooks/use-vant'
 import useTitle from '@/hooks/use-title'
-import useScroll from '@/hooks/use-scroll'
 import { getGoodsData } from './resource/data'
 import { IGoodsListProps } from './resource/types'
+import { useScroll } from '@vueuse/core'
 
 const shoppingRef = ref<InstanceType<typeof shoppingItem> | null>(null)
+const shoppingWrapRef = ref<HTMLElement | null>(null)
 // 上拉加载数据
-const { isReachBottom } = useScroll()
-watch(isReachBottom, (newValue: boolean) => {
-  if (newValue) {
-    if (goodsList.value.length <= 50) {
-      showLoading()
-      goodsList.value = [...goodsList.value, ...getGoodsData()]
+const { arrivedState } = useScroll(shoppingWrapRef)
+watch(
+  () => arrivedState.bottom,
+  (newValue) => {
+    if (newValue) {
+      if (goodsList.value.length <= 50) {
+        showLoading()
+        goodsList.value = [...goodsList.value, ...getGoodsData()]
+      }
+      nextTick(() => {
+        closeLoading()
+      })
     }
-    isReachBottom.value = false
-    nextTick(() => {
-      closeLoading()
-    })
   }
-})
+)
 
 const priceList = ref<string[]>([
   '全部',
@@ -63,6 +66,7 @@ useTitle('租币商城')
 .shopping-wrapper {
   width: 100%;
   height: 100vh;
+  overflow: auto;
   background: #f7f8f9;
 }
 </style>

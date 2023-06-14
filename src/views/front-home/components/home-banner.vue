@@ -103,7 +103,7 @@ function renderIcon() {
 onMounted(() => renderIcon())
 function getTopPosition(index: number) {
   const antForestBallItem: any = document.getElementById(`icon-${index}`)
-  console.log(antForestBallItem.style.width)
+  console.log(antForestBallItem.offsetWidth)
   // if (antForestBallItem) {
   //   antForestBallItem.style.position = 'absolute'
   //   antForestBallItem.style.left = `${((60 - 42.5 + index * 10) / 100) * 100}%`
