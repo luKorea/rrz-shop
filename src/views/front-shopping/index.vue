@@ -29,7 +29,9 @@ import { useScroll } from '@vueuse/core'
 const shoppingRef = ref<InstanceType<typeof shoppingItem> | null>(null)
 const shoppingWrapRef = ref<HTMLElement | null>(null)
 // 上拉加载数据
-const { arrivedState } = useScroll(shoppingWrapRef)
+const { arrivedState } = useScroll(shoppingWrapRef, {
+  throttle: 200
+})
 watch(
   () => arrivedState.bottom,
   (newValue) => {

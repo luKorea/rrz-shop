@@ -103,7 +103,9 @@ const totalPurse = ref(0)
 
 // 上拉加载数据
 const noticeRef = ref<HTMLElement | null>(null)
-const { arrivedState } = useScroll(noticeRef)
+const { arrivedState } = useScroll(noticeRef, {
+  throttle: 200
+})
 watch(
   () => arrivedState.bottom,
   (newValue) => {
