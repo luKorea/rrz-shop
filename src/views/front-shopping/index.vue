@@ -15,7 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
+import { useScroll } from '@vueuse/core'
+
 import shoppingBanner from './components/shopping-banner.vue'
 import shoppingItem from './components/shopping-item.vue'
 import loadMoreBtn from '@/components/load-more-btn/index.vue'
@@ -23,8 +25,8 @@ import loadMoreBtn from '@/components/load-more-btn/index.vue'
 import { showLoading, closeLoading } from '@/hooks/use-vant'
 import useTitle from '@/hooks/use-title'
 import { getGoodsData } from './resource/data'
-import { IGoodsListProps } from './resource/types'
-import { useScroll } from '@vueuse/core'
+import type { IGoodsListProps } from './resource/types'
+import type { IPageProps } from '@/types'
 
 const shoppingRef = ref<InstanceType<typeof shoppingItem> | null>(null)
 const shoppingWrapRef = ref<HTMLElement | null>(null)
@@ -32,13 +34,21 @@ const shoppingWrapRef = ref<HTMLElement | null>(null)
 const { arrivedState } = useScroll(shoppingWrapRef, {
   throttle: 200
 })
+
+const pageInfo = ref<IPageProps>({
+  page: 1,
+  pageSize: 4,
+  total: 0
+})
 watch(
   () => arrivedState.bottom,
   (newValue) => {
     if (newValue) {
-      if (goodsList.value.length <= 50) {
+      if (pageInfo.value.total <= 20) {
+        pageInfo.value.page++
         showLoading()
-        goodsList.value = [...goodsList.value, ...getGoodsData()]
+        goodsList.value = [...goodsList.value, ...getGoodsData(pageInfo.value)]
+        pageInfo.value.total = goodsList.value.length
       }
       nextTick(() => {
         closeLoading()
@@ -55,7 +65,7 @@ const priceList = ref<string[]>([
   '5000以上'
 ])
 
-const goodsList = ref<IGoodsListProps[]>(getGoodsData())
+const goodsList = ref<IGoodsListProps[]>(getGoodsData(pageInfo.value))
 
 function goPage() {
   console.log('去页面')

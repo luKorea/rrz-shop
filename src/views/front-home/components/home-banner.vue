@@ -43,17 +43,17 @@
     </template>
     <!-- 今日步数 -->
     <div class="day-wrap">
-      <div class="day-info">
-        <div class="title">今日步数</div>
-        <div class="count">2748</div>
-        <div class="day-tip">
-          <div class="boy">
-            <img src="@/assets/image/home/boy.png" alt="" />
-          </div>
+      <div class="day-tip">
+        <div class="left">
+          <img src="@/assets/image/home/boy.png" alt="" />
+        </div>
+        <div class="center">
+          <div class="title">今日步数</div>
+          <div class="count">2748</div>
           <div class="tip">每日24:00自动清零</div>
-          <div class="girl">
-            <img src="@/assets/image/home/girl.png" alt="" />
-          </div>
+        </div>
+        <div class="right">
+          <img src="@/assets/image/home/girl.png" alt="" />
         </div>
       </div>
       <div class="send-btn">瓜分888现金</div>
@@ -68,7 +68,6 @@ import { storeToRefs } from 'pinia'
 import { showSuccessToast } from '@/hooks/use-vant'
 import { useRouter } from 'vue-router'
 import type { IIconProps } from '../resource/types'
-import { iconProps } from 'vant'
 
 interface IProps {
   iconList: IIconProps[]
@@ -206,7 +205,7 @@ function getTopPosition(index: number) {
     justify-content: center;
     width: 100%;
     position: absolute;
-    top: 70px;
+    top: 85px;
     .icon-item {
       display: flex;
       flex-direction: column;
@@ -214,20 +213,20 @@ function getTopPosition(index: number) {
       position: relative;
       width: 48px;
       margin-right: 10px;
-      // &:nth-child(1) {
-      //   top: 30px;
-      // }
-      // &:nth-child(2) {
-      //   top: 10px;
-      // }
-      // &:nth-child(3) {
-      //   top: 14px;
-      // }
-      // &:nth-child(4) {
-      //   top: 10px;
-      // }
+      &:nth-child(1) {
+        top: 30px;
+      }
+      &:nth-child(2) {
+        top: 10px;
+      }
+      &:nth-child(3) {
+        top: 15px;
+      }
+      &:nth-child(4) {
+        top: 10px;
+      }
       &:last-child {
-        // top: 30px;
+        top: 30px;
         margin-right: 0;
       }
       .title {
@@ -251,22 +250,21 @@ function getTopPosition(index: number) {
     position: absolute;
     bottom: 50px;
     width: 100%;
-    .day-info {
+    .day-tip {
       .flex-layout();
-      flex-direction: column;
+      align-items: end;
       background: linear-gradient(
         360deg,
         rgba(255, 255, 255, 0) 0%,
         #ffffff 100%
       );
       border-radius: 50%;
+
       .title {
-        height: 12px;
         font-size: 12px;
         font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: #999999;
-        line-height: 12px;
         padding-top: 20px;
       }
       .count {
@@ -275,29 +273,32 @@ function getTopPosition(index: number) {
         font-weight: bold;
         color: #084f3e;
         position: relative;
-        top: 20px;
+        top: 10px;
       }
-      .day-tip {
-        .flex-layout();
-        .boy {
-          width: 33px;
-          height: 62px;
-        }
-        .tip {
-          height: 12px;
-          font-size: 12px;
-          font-family: PingFangSC-Regular, PingFang SC;
-          font-weight: 400;
-          color: #999999;
-          line-height: 12px;
-        }
-        .girl {
-          width: 38px;
-          height: 52px;
-          img {
-            position: relative;
-            top: 5px;
-          }
+      .left {
+        width: 33px;
+        height: 62px;
+      }
+      .center {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .tip {
+        height: 12px;
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        padding-bottom: 16px;
+      }
+      .right {
+        width: 38px;
+        height: 52px;
+        img {
+          position: relative;
+          right: -4px;
         }
       }
     }

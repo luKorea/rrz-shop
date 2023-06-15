@@ -1,17 +1,18 @@
-import uuid from '@/utils/uuid'
 import { IGoodsListProps } from './types'
+import { Random } from 'mockjs'
+import type { IPageProps } from '@/types'
 
-export function getGoodsData() {
+export function getGoodsData(page: IPageProps) {
   const newList: IGoodsListProps[] = []
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < page.pageSize; i++) {
     newList.push({
-      id: uuid(),
-      title: '顶配 iPhone Xs 256 Pro Max',
-      purse: 2048 + i,
-      currentPrice: 9.9 + i,
-      originalPrice: 12.8 + i,
-      count: 2434 + i,
-      isFree: i % 2 === 0,
+      id: Random.id(),
+      title: `顶配 iPhone Xs ${Random.integer(256, 270)} Pro Max`,
+      purse: Random.integer(1, 100),
+      currentPrice: Random.integer(666, 10000),
+      originalPrice: Random.integer(999, 10000),
+      count: Random.integer(2000, 10000),
+      isFree: Random.boolean(),
       img: require(`@/assets/image/shopping/goods-item${i + 1}.png`)
     })
   }

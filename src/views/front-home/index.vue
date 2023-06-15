@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrapper">
+  <div class="home-wrapper" ref="homeRef">
     <home-banner :icon-list="iconList"></home-banner>
     <home-item
       :goods-list="goodsList"
@@ -15,15 +15,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import homeBanner from './components/home-banner.vue'
 import homeItem from './components/home-item.vue'
 import loadMoreBtn from '@/components/load-more-btn/index.vue'
 
 import useTitle from '@/hooks/use-title'
-import type { IItemProps, IIconProps } from './resource/types'
+import type { IItemProps, IIconProps, IGoodsListProps } from './resource/types'
 import { getGoodsData } from './resource/data'
 import uuid from '@/utils/uuid'
+import { IPageProps } from '@/types'
+import { useScroll } from '@vueuse/core'
+import { showLoading, closeLoading } from '@/hooks/use-vant'
 
 // 图标
 const iconList = ref<IIconProps[]>([
@@ -92,7 +95,34 @@ const itemList = ref<IItemProps[]>([
   }
 ])
 
-const goodsList = computed(() => getGoodsData())
+const homeRef = ref<InstanceType<typeof HTMLElement> | null>(null)
+const { arrivedState } = useScroll(homeRef, {
+  throttle: 200
+})
+
+const pageInfo = ref<IPageProps>({
+  page: 1,
+  pageSize: 4,
+  total: 0
+})
+const goodsList = ref<IGoodsListProps[]>(getGoodsData(pageInfo.value))
+watch(
+  () => arrivedState.bottom,
+  (newValue) => {
+    if (newValue) {
+      if (pageInfo.value.total <= 20) {
+        pageInfo.value.page++
+        showLoading()
+        goodsList.value = [...goodsList.value, ...getGoodsData(pageInfo.value)]
+        pageInfo.value.total = goodsList.value.length
+      }
+      nextTick(() => {
+        closeLoading()
+      })
+    }
+  }
+)
+
 function goPage() {
   console.log('去页面')
 }
@@ -104,6 +134,7 @@ useTitle('租币商城')
 .home-wrapper {
   width: 100%;
   height: 100vh;
+  overflow: auto;
   background: #f7f8f9;
 }
 </style>

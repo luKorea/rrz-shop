@@ -96,7 +96,6 @@ defineExpose({
     line-height: 23px;
   }
   .sub-desc {
-    height: 19px;
     font-size: 14px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;

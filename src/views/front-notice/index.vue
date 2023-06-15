@@ -72,11 +72,25 @@ import {
 import { nextTick } from 'vue'
 import { getOrderData, getActiveData } from './resource/data'
 import { useScroll } from '@vueuse/core'
+import type { IPageProps } from '@/types'
 
+const noticeRef = ref<HTMLElement | null>(null)
+const itemRef = ref<InstanceType<typeof noticeActive> | null>(null)
+
+const activePageInfo = ref<IPageProps>({
+  page: 1,
+  pageSize: 10,
+  total: 0
+})
+const orderPageInfo = ref<IPageProps>({
+  page: 1,
+  pageSize: 10,
+  total: 0
+})
 // 活动通知
-const activeList = ref<IDataListProps[]>(getActiveData())
+const activeList = ref<IDataListProps[]>(getActiveData(activePageInfo.value))
 // 订单消息
-const orderList = ref<IDataListProps[]>(getOrderData())
+const orderList = ref<IDataListProps[]>(getOrderData(orderPageInfo.value))
 const selectItem = ref('notice')
 const tabList = computed<ITabProps[]>(() => {
   return [
@@ -92,17 +106,21 @@ const tabList = computed<ITabProps[]>(() => {
   ]
 })
 
-const itemRef = ref<InstanceType<typeof noticeActive> | null>(null)
+// 读取公告后展示获取框
 const showGetPurse = ref(false)
+// 保存用户点击信息
 const saveClickItemInfo = ref<IDataListProps>()
 
+// 判断当前是否处于公告列表
 const isNotice = computed(() => selectItem.value === 'notice')
+// 是否显示小红点
 const isShowDot = computed(() => !!orderList.value.find((i) => !i.isWatch))
+// 用来处理公告一键点击后计算未读公告可获取租币数目
 const isOneClick = ref(false)
+// 存储用户点击一键已读时计算总数
 const totalPurse = ref(0)
 
 // 上拉加载数据
-const noticeRef = ref<HTMLElement | null>(null)
 const { arrivedState } = useScroll(noticeRef, {
   throttle: 200
 })
@@ -110,12 +128,21 @@ watch(
   () => arrivedState.bottom,
   (newValue) => {
     if (newValue) {
-      if (isNotice.value && activeList.value.length <= 50) {
+      if (isNotice.value && activePageInfo.value.total <= 20) {
+        activePageInfo.value.page++
         showLoading()
-        activeList.value = [...activeList.value, ...getActiveData()]
-      } else if (!isNotice.value && orderList.value.length <= 50) {
+        activeList.value = [
+          ...activeList.value,
+          ...getActiveData(activePageInfo.value)
+        ]
+        activePageInfo.value.total = activeList.value.length
+      } else if (!isNotice.value && activePageInfo.value.total <= 20) {
+        orderPageInfo.value.page++
         showLoading()
-        orderList.value = [...orderList.value, ...getOrderData()]
+        orderList.value = [
+          ...orderList.value,
+          ...getOrderData(orderPageInfo.value)
+        ]
       }
       nextTick(() => {
         closeLoading()
@@ -215,7 +242,6 @@ async function changGetPurseState() {
 }
 
 // tab
-
 function changeItem(item: ITabProps) {
   const checked = tabList.value.find((i) => i.title === item.title)
   checked && (selectItem.value = checked.name)
