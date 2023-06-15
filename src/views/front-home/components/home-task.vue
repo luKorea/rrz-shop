@@ -115,7 +115,6 @@ const getTotalPurse = computed(() => {
   const dayCount = dayList.value
     .filter((i) => i.isSend)
     .reduce((pre, next) => pre + next.purse, 0)
-  console.log(newPeopleCount)
   return newPeopleCount + dayCount
 })
 

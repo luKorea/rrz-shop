@@ -45,7 +45,6 @@ export default function useScroll(elRef?: any) {
     if (elRef) {
       el = elRef.value
     }
-    console.log(el, 'el')
     el.addEventListener('scroll', scrollListenerHandler)
   })
 
