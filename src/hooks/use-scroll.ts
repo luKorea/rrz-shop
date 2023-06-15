@@ -1,3 +1,5 @@
+//  使用时请设置页面 overflow: auto
+
 import { onMounted, onUnmounted, ref, onDeactivated } from 'vue'
 import { throttle } from 'underscore'
 
@@ -14,11 +16,7 @@ export interface Ref<T = any> {
 
 type MaybeRef<T> = T | Ref<T>
 type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
-export default function useScroll(
-  elRef?: MaybeRefOrGetter<
-    HTMLElement | SVGElement | Window | Document | null | undefined
-  >
-) {
+export default function useScroll(elRef?: any) {
   let el = window as any
 
   const isReachBottom = ref(false)
@@ -45,7 +43,7 @@ export default function useScroll(
 
   onMounted(() => {
     if (elRef) {
-      el = elRef
+      el = elRef.value
     }
     console.log(el, 'el')
     el.addEventListener('scroll', scrollListenerHandler)

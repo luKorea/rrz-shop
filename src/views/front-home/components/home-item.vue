@@ -145,7 +145,7 @@ function goPage(item: IItemProps) {
       border-radius: 5px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       box-sizing: border-box;
 
       .img {

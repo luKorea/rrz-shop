@@ -99,7 +99,6 @@ const homeRef = ref<InstanceType<typeof HTMLElement> | null>(null)
 const { arrivedState } = useScroll(homeRef, {
   throttle: 200
 })
-
 const pageInfo = ref<IPageProps>({
   page: 1,
   pageSize: 4,
