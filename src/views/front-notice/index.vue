@@ -128,7 +128,7 @@ watch(
   () => arrivedState.bottom,
   (newValue) => {
     if (newValue) {
-      if (isNotice.value && activePageInfo.value.total <= 20) {
+      if (isNotice.value && activePageInfo.value.total < 20) {
         activePageInfo.value.page++
         showLoading()
         activeList.value = [
@@ -136,13 +136,14 @@ watch(
           ...getActiveData(activePageInfo.value)
         ]
         activePageInfo.value.total = activeList.value.length
-      } else if (!isNotice.value && activePageInfo.value.total <= 20) {
+      } else if (!isNotice.value && orderPageInfo.value.total < 20) {
         orderPageInfo.value.page++
         showLoading()
         orderList.value = [
           ...orderList.value,
           ...getOrderData(orderPageInfo.value)
         ]
+        orderPageInfo.value.total = orderList.value.length
       }
       nextTick(() => {
         closeLoading()

@@ -44,7 +44,7 @@ watch(
   () => arrivedState.bottom,
   (newValue) => {
     if (newValue) {
-      if (pageInfo.value.total <= 20) {
+      if (pageInfo.value.total < 20) {
         pageInfo.value.page++
         showLoading()
         goodsList.value = [...goodsList.value, ...getGoodsData(pageInfo.value)]
