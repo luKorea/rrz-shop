@@ -240,7 +240,7 @@ function getTopPosition(index: number) {
       .img {
         width: 48px;
         height: 48px;
-        // animation: iconSport 1s linear infinite;
+        animation: iconSport 2s linear infinite;
       }
     }
   }
