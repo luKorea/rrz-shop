@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted } from 'vue'
+import { defineProps } from 'vue'
 import userStore from '@/store/module/user'
 import { storeToRefs } from 'pinia'
 import { showSuccessToast } from '@/hooks/use-vant'
@@ -73,7 +73,7 @@ interface IProps {
   iconList: IIconProps[]
 }
 
-const props = defineProps<IProps>()
+defineProps<IProps>()
 
 const router = useRouter()
 const user = userStore()
@@ -91,24 +91,23 @@ function goNotice() {
   router.push('/notice')
 }
 
-function renderIcon() {
-  if (props.iconList.length) {
-    props.iconList.forEach((_, index) => {
-      getTopPosition(index)
-    })
-  }
-}
+// function renderIcon() {
+//   if (props.iconList.length) {
+//     props.iconList.forEach((_, index) => {
+//       getTopPosition(index)
+//     })
+//   }
+// }
 
-onMounted(() => renderIcon())
-function getTopPosition(index: number) {
-  const antForestBallItem: any = document.getElementById(`icon-${index}`)
-  console.log(antForestBallItem.offsetWidth)
-  // if (antForestBallItem) {
-  //   antForestBallItem.style.position = 'absolute'
-  //   antForestBallItem.style.left = `${((60 - 42.5 + index * 10) / 100) * 100}%`
-  //   antForestBallItem.style.top = `${((60 - 42.5 + index * 200) / 100) * 100}%` // 使用%定位
-  // }
-}
+// onMounted(() => renderIcon())
+// function getTopPosition(index: number) {
+//   const antForestBallItem: any = document.getElementById(`icon-${index}`)
+//   if (antForestBallItem) {
+//     antForestBallItem.style.position = 'absolute'
+//     antForestBallItem.style.left = `${((60 - 42.5 + index * 10) / 100) * 100}%`
+//     antForestBallItem.style.top = `${((60 - 42.5 + index * 200) / 100) * 100}%` // 使用%定位
+//   }
+// }
 </script>
 
 <style scoped lang="less">

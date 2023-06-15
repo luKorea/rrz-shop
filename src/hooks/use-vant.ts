@@ -21,7 +21,6 @@ const defaultValue: DialogOptions = {
 }
 
 function showFrontDialog(options: DialogOptions) {
-  console.log({ ...options, ...defaultValue })
   return new Promise((resolve, reject) => {
     showDialog({ ...options, ...defaultValue })
       .then(() => {
