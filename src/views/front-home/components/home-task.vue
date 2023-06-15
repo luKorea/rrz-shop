@@ -12,9 +12,13 @@
       <div class="content">
         <div class="content-title">新人专享</div>
         <!-- 新人专享 -->
-        <template v-if="newPeopleList.length">
-          <template v-for="item of newPeopleList" :key="item.id">
-            <div class="item" @click="handlePurse(item, 'new')">
+        <template v-if="taskList.length">
+          <template v-for="item of taskList" :key="item.id">
+            <div
+              v-if="item.type === 'new'"
+              class="item"
+              @click="handlePurse(item)"
+            >
               <div class="icon">
                 <van-icon :name="item.icon"></van-icon>
               </div>
@@ -28,9 +32,13 @@
       </div>
       <div class="content">
         <div class="content-title">每天逛逛</div>
-        <template v-if="dayList.length">
-          <template v-for="item of dayList" :key="item.id">
-            <div class="item" @click="handlePurse(item, 'day')">
+        <template v-if="taskList.length">
+          <template v-for="item of taskList" :key="item.id">
+            <div
+              v-if="item.type === 'day'"
+              class="item"
+              @click="handlePurse(item)"
+            >
               <div class="icon">
                 <van-icon :name="item.icon"></van-icon>
               </div>
@@ -59,63 +67,64 @@ import getPurse from '@/components/get-purse/index.vue'
 import uuid from '@/utils/uuid'
 
 // 新人专享
-const newPeopleList = ref<ITaskProps[]>([
+const taskList = ref<ITaskProps[]>([
   {
     id: uuid(),
     title: '收藏人人租机小程序',
     purse: 30,
     isSend: true,
-    icon: 'logistics'
+    icon: 'logistics',
+    type: 'new'
   },
   {
     id: uuid(),
     title: '进行实名认证',
     purse: 30,
     isSend: false,
-    icon: 'vip-card-o'
-  }
-])
-// 每日签到
-const dayList = ref<ITaskProps[]>([
+    icon: 'vip-card-o',
+    type: 'new'
+  },
   {
     id: uuid(),
     title: '逛一逛活动页',
     purse: 30,
     isSend: true,
-    icon: 'paid'
+    icon: 'paid',
+    type: 'day'
   },
   {
     id: uuid(),
     title: '逛一逛首页',
     purse: 30,
     isSend: false,
-    icon: 'paid'
+    icon: 'paid',
+    type: 'day'
   },
   {
     id: uuid(),
     title: '逛一逛生活页',
     purse: 30,
     isSend: false,
-    icon: 'paid'
+    icon: 'paid',
+    type: 'day'
   },
   {
     id: uuid(),
     title: '去分享',
     purse: 30,
     isSend: false,
-    icon: 'share-o'
+    icon: 'share-o',
+    type: 'day'
   }
 ])
 
 // 计算已获得租币数目
 const getTotalPurse = computed(() => {
-  const newPeopleCount = newPeopleList.value
+  if (!taskList.value.length) return
+  const count = taskList.value
     .filter((i) => i.isSend)
     .reduce((pre, next) => pre + next.purse, 0)
-  const dayCount = dayList.value
-    .filter((i) => i.isSend)
-    .reduce((pre, next) => pre + next.purse, 0)
-  return newPeopleCount + dayCount
+  return count
 })
 
 const showGetPurse = ref(false)
@@ -128,16 +137,10 @@ function changeModal(state = true) {
   }
 }
 
-async function handlePurse(item: ITaskProps, type = 'new') {
+async function handlePurse(item: ITaskProps) {
   if (!item.isSend) {
-    if (type === 'new') {
-      const selectItem = newPeopleList.value.find((i) => i.id === item.id)
-      selectItem && (selectItem.isSend = true)
-    } else {
-      const selectItem = dayList.value.find((i) => i.id === item.id)
-      console.log(selectItem, 'selectItem')
-      selectItem && (selectItem.isSend = true)
-    }
+    const selectItem = taskList.value.find((i) => i.id === item.id)
+    selectItem && (selectItem.isSend = true)
     showGetPurse.value = true
     totalPurse.value = item.purse
     await nextTick()

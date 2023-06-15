@@ -20,12 +20,14 @@ export interface IIconProps {
   id: string
 }
 
+export type TTaskType = 'new' | 'day'
 export interface ITaskProps {
   id: string
   title: string
   purse: number
   isSend: boolean
   icon: string
+  type: TTaskType
 }
 
 export interface IItemProps {
