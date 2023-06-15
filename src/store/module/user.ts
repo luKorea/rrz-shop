@@ -1,3 +1,4 @@
+import { localCache } from '@/utils/localCache'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 const userStore = defineStore('user', () => {
@@ -12,7 +13,12 @@ const userStore = defineStore('user', () => {
   })
 
   function initLocalStorage() {
-    console.log(initState.value)
+    const token = localCache.getCache('token')
+    const userInfo = localCache.getCache('userInfo')
+    if (token && userInfo) {
+      initState.value.token = token
+      initState.value.userInfo = userInfo
+    }
   }
 
   return {
