@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, onMounted } from 'vue'
 import userStore from '@/store/module/user'
 import { storeToRefs } from 'pinia'
 import { showSuccessToast } from '@/hooks/use-vant'
@@ -73,7 +73,7 @@ interface IProps {
   iconList: IIconProps[]
 }
 
-defineProps<IProps>()
+const props = defineProps<IProps>()
 
 const router = useRouter()
 const user = userStore()
@@ -91,21 +91,69 @@ function goNotice() {
   router.push('/notice')
 }
 
-// function renderIcon() {
-//   if (props.iconList.length) {
-//     props.iconList.forEach((_, index) => {
-//       getTopPosition(index)
-//     })
-//   }
-// }
+function _rnd(n: number, m: number): number {
+  const random = Math.floor(Math.random() * (m - n + 1) + n)
+  return random
+}
+function _fixedNumber(index: number) {
+  switch (index) {
+    case 0:
+      return 30
+    case 1:
+      return 10
+    case 2:
+      return 15
+    case 3:
+      return 10
+    case 4:
+      return 30
+  }
+}
 
-// onMounted(() => renderIcon())
+interface IElement extends HTMLElement {
+  x?: number
+  y?: number
+}
+
+function renderIcon() {
+  if (props.iconList.length) {
+    props.iconList.forEach((_, index) => {
+      getTopPosition(index)
+    })
+  }
+}
+
+onMounted(() => renderIcon())
+
+function getTopPosition(index: number) {
+  const antForestBallItem: IElement | null = document.getElementById(
+    `icon-${index}`
+  )
+  if (antForestBallItem) {
+    antForestBallItem.style.position = 'relative'
+    antForestBallItem.style.top = _fixedNumber(index) + 'px'
+
+    // const top = Math.floor(Math.random() + 10 * (index + 1 * 0.5)) + 'px'
+    // antForestBallItem.style.top = top
+    // console.log(top)
+  }
+}
+// p1--暂无法实现 pass
 // function getTopPosition(index: number) {
-//   const antForestBallItem: any = document.getElementById(`icon-${index}`)
+//   const antForestBallItem: IElement | null = document.getElementById(
+//     `icon-${index}`
+//   )
 //   if (antForestBallItem) {
+//     const width = antForestBallItem.clientWidth
+//     const height = antForestBallItem.clientHeight
+//     antForestBallItem.x = _rnd(0.1 * width, 0.9 * width)
+//     antForestBallItem.y = _rnd(0.1 * height, 0.6 * height)
+//     console.log(antForestBallItem.x, antForestBallItem.y, 'antForestBallItem')
 //     antForestBallItem.style.position = 'absolute'
-//     antForestBallItem.style.left = `${((60 - 42.5 + index * 10) / 100) * 100}%`
-//     antForestBallItem.style.top = `${((60 - 42.5 + index * 200) / 100) * 100}%` // 使用%定位
+//     antForestBallItem.style.left =
+//       Math.abs(((antForestBallItem.x - 42.5) / width) * 100) + '%'
+//     antForestBallItem.style.top =
+//       Math.abs(((antForestBallItem.y - 42.5) / height) * 10) + 'px'
 //   }
 // }
 </script>
@@ -209,23 +257,23 @@ function goNotice() {
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
+      // position: relative;
       width: 48px;
       margin-right: 10px;
-      &:nth-child(1) {
-        top: 30px;
-      }
-      &:nth-child(2) {
-        top: 10px;
-      }
-      &:nth-child(3) {
-        top: 15px;
-      }
-      &:nth-child(4) {
-        top: 10px;
-      }
+      // &:nth-child(1) {
+      //   top: 30px;
+      // }
+      // &:nth-child(2) {
+      //   top: 10px;
+      // }
+      // &:nth-child(3) {
+      //   top: 15px;
+      // }
+      // &:nth-child(4) {
+      //   top: 10px;
+      // }
       &:last-child {
-        top: 30px;
+        // top: 30px;
         margin-right: 0;
       }
       .title {
